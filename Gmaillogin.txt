@@ -1,0 +1,111 @@
+package com;
+
+import java.io.FileInputStream;
+
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.jar.JarException;
+
+import javax.swing.text.BadLocationException;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+
+
+
+
+public class Gmaillogin
+
+{
+
+public static void main(String args[]) throws IOException, JarException,BadLocationException,FileNotFoundException, InterruptedException
+
+
+{ 
+	System.out.println("Cherry");
+	//System.setProperty("webdriver.chrome.driver","C:\\Users\\Cherry\\Downloads\\chromedriver_win32\\chromedriver.exe");
+	//WebDriver driver = new ChromeDriver();
+	//driver.manage().window().maximize();
+	System.out.println("Cherry1");
+
+
+    FileInputStream fis = new FileInputStream("C:\\\\Users\\\\Cherry\\\\Downloads\\\\Gmaillogintest.xlsx");
+    XSSFWorkbook wb = new XSSFWorkbook(fis);
+    XSSFSheet sheet =  wb.getSheetAt(0);
+    int nor=sheet.getLastRowNum();
+    System.out.println("no of rows:"+nor);
+    //driver.get("http://www.gmail.com");
+    for(int row=1; row <=sheet.getLastRowNum();row++)
+     {
+    	System.setProperty("webdriver.chrome.driver","C:\\Users\\Cherry\\Downloads\\chromedriver_win32\\chromedriver.exe");
+    	WebDriver driver = new ChromeDriver();
+    	driver.manage().window().maximize(); 
+    	driver.get("http://www.gmail.com");
+    	
+    	 String username = sheet.getRow(row).getCell(0).getStringCellValue();          
+         System.out.println("Username "+username);
+         WebElement txtgoogle = driver.findElement(By.name("identifier"));
+         txtgoogle.sendKeys(username);
+         
+         driver.findElement(By.id("identifierNext")).click();
+         System.out.println("Succesfully Entered username");
+         
+         driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
+         String password = sheet.getRow(row).getCell(1).getStringCellValue();
+         
+         driver.findElement(By.xpath("//*[@id=\"password\"]/div[1]/div/div[1]/input")).sendKeys(password);
+         
+         driver.findElement(By.cssSelector("#passwordNext")).click();
+         
+         if(driver.findElement(By.xpath("//*[@id=\"password\"]/div[2]/div[2]")).isDisplayed())
+         {
+        	 System.out.println("Login Failed: Password Incorrect For: "+ username);
+         }
+         else
+         {
+        	System.out.println("Login Successfull For Username :"+ username); 
+         }
+         
+         driver.manage().timeouts().implicitlyWait(50,TimeUnit.SECONDS);
+         driver.findElement(By.xpath("//*[@id=\":hm\"]/div/div")).click();
+         
+         driver.manage().timeouts().implicitlyWait(50,TimeUnit.SECONDS);
+         
+         String sendto = sheet.getRow(row).getCell(2).getStringCellValue();
+         driver.findElement(By.name("to")).sendKeys(sendto);
+         
+         driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
+         driver.findElement(By.name("subjectbox")).sendKeys("Test mail");
+         driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);
+         
+         try {
+        	 
+        	 driver.findElement(By.cssSelector(".aoO")).click();
+        	 System.out.println("Email has been sent successfully send to :" +sendto);
+        	 
+        	 }
+        	 catch(Exception e)
+        	 {
+        		 System.out.println(" Email Has not been sent to :"+sendto );
+        	 }
+         
+         driver.quit();
+
+
+
+}
+}
+}
+
+
+
+
+
